@@ -6,29 +6,41 @@ import {
   APIGatewayProxyHandler
 } from 'aws-lambda'
 
-import {
-  dbQueryTodos
-} from "../../db/dbQueryTodos"
+import { dbQueryTodos } from '../../db/dbQueryTodos'
 
-import {getUserId} from "../utils"
+import { getUserId } from '../utils'
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  try {
+    const userId = getUserId(event)
 
-  const userId = getUserId(event)
+    console.info('Retrieving Data...')
 
-  console.log(userId)
+    const items = await dbQueryTodos(userId)
 
-  const items = await dbQueryTodos("123");
+    console.info('Data Retrieved, Sending to Client...')
 
-  return {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: JSON.stringify({
-      items
-    })
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        items
+      })
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        message: err
+      })
+    }
   }
 }

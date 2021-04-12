@@ -1,10 +1,48 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  APIGatewayProxyHandler
+} from 'aws-lambda'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
+import { generateUrl } from '../../s3/generateUrl'
 
-  // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
-  return undefined
+import {dbUploadUrl} from "../../db/dbUploadURL"
+
+export const handler: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const todoId = event.pathParameters.todoId
+
+    console.info('Retrieving Presigned Url...')
+
+    const url = generateUrl(todoId)
+
+    await dbUploadUrl(todoId, url)
+
+    console.info('Data Retrieved, Sending to Client...')
+
+    return {
+      statusCode: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        uploadUrl: url
+      })
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({
+        message: err
+      })
+    }
+  }
 }

@@ -11,6 +11,8 @@
     "http-errors": "^1.7.2",
     "jsonwebtoken": "^8.5.1",
     "middy": "^0.27.0",
+    "offline": "0.0.1",
+    "serverless": "^2.39.0",
     "source-map-support": "^0.5.11",
     "uuid": "^3.3.2",
     "winston": "^3.2.1"

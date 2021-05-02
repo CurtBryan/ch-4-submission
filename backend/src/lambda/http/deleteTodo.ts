@@ -7,6 +7,7 @@ import {
 } from 'aws-lambda'
 
 import { dbDeleteTodo } from '../../db/dbDeleteTodo'
+import { getUserId } from '../utils'
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
@@ -14,11 +15,13 @@ export const handler: APIGatewayProxyHandler = async (
   try {
     const todoId = event.pathParameters.todoId
 
+    const userId = getUserId(event)
+
     if(!todoId) throw 'please provide a todoId parameter to complete this request'
 
     console.info('Deleting Data...')
 
-    await dbDeleteTodo(todoId)
+    await dbDeleteTodo(todoId, userId)
 
     console.info('Succesfully Deleted, Sending to Client...')
 

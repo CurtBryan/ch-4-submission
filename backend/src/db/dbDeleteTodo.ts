@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk'
 
-export const dbDeleteTodo = async (todoId: string) => {
+export const dbDeleteTodo = async (todoId: string, userId: string) => {
   const dynaConnection = new DynamoDB.DocumentClient()
 
   const environment = process.env.DEPLOYMENT_STAGE
@@ -9,7 +9,8 @@ export const dbDeleteTodo = async (todoId: string) => {
     TableName: `todos-table-${environment}`,
     // TableName: 'todos-test',
     Key: {
-      todoId
+      todoId,
+      userId
     }
   }
   const deletion = await dynaConnection.delete(dynaDeleteConfig).promise()

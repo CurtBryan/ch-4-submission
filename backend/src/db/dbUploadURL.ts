@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk'
 
-export const dbUploadUrl = async (todoId: string, uploadUrl: string) => {
+export const dbUploadUrl = async (todoId: string, uploadUrl: string, userId: string) => {
   const dynaConnection = new DynamoDB.DocumentClient()
 
   const environment = process.env.DEPLOYMENT_STAGE
@@ -11,7 +11,8 @@ export const dbUploadUrl = async (todoId: string, uploadUrl: string) => {
     TableName: `todos-table-${environment}`,
     // TableName: 'todos-test',
     Key: {
-      todoId
+      todoId,
+      userId
     },
     UpdateExpression: 'set attachmentUrl = :attachmentUrl',
     ExpressionAttributeValues: {

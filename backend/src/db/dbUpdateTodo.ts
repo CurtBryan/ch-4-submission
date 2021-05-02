@@ -1,6 +1,10 @@
 import { DynamoDB } from 'aws-sdk'
 
-export const dbUpdateTodo = async (todoId: string, body: any) => {
+export const dbUpdateTodo = async (
+  todoId: string,
+  body: any,
+  userId: string
+) => {
   const dynaConnection = new DynamoDB.DocumentClient()
 
   const environment = process.env.DEPLOYMENT_STAGE
@@ -9,7 +13,8 @@ export const dbUpdateTodo = async (todoId: string, body: any) => {
     TableName: `todos-table-${environment}`,
     // TableName: 'todos-test',
     Key: {
-      todoId
+      todoId,
+      userId
     }
   }
 
@@ -21,7 +26,8 @@ export const dbUpdateTodo = async (todoId: string, body: any) => {
     TableName: `todos-table-${environment}`,
     // TableName: 'todos-test',
     Key: {
-      todoId
+      todoId,
+      userId
     },
     UpdateExpression: 'set todoName = :todoName, dueDate=:dueDate, done=:done',
     ExpressionAttributeValues: {

@@ -7,6 +7,8 @@ plugins:
   - serverless-offline
   - serverless-dynamodb-local
   - serverless-s3-local
+  - serverless-aws-documentation
+  - serverless-reqvalidator-plugin
 
 provider:
   name: aws
@@ -25,6 +27,18 @@ provider:
   tracing:
     lambda: true
     apiGateway: true    
+
+custom: 
+  documentation: 
+    api: 
+      info:
+        version: v1.0.0
+        title: serverless todo app
+        description: Serverless application for Todos
+    models:
+      - name: createTodo
+        contentType: application/json
+        schema: ${file(src\models\create-todo.json)}
 
 functions:
 
@@ -66,6 +80,12 @@ functions:
           method: post
           path: todos
           cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation: 
+            summary: Create a new todo
+            description: Create a new todo
+            requestModels: 
+              'application/json': createTodo
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -179,6 +199,15 @@ functions:
 
 resources:
   Resources:
+
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: "request-body-validator"
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
 
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse

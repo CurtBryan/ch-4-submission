@@ -14,6 +14,8 @@ export const handler: APIGatewayProxyHandler = async (
   try {
     const todoId = event.pathParameters.todoId
 
+    if(!todoId) throw 'please provide a todoId parameter to complete this request'
+
     console.info('Deleting Data...')
 
     await dbDeleteTodo(todoId)

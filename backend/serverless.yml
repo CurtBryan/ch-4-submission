@@ -241,5 +241,7 @@ resources:
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
+              - AttributeName: todoId
+                KeyType: RANGE
             Projection:
               ProjectionType: ALL  

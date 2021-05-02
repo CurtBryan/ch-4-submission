@@ -16,6 +16,8 @@ export const handler: APIGatewayProxyHandler = async (
   try {
     const todoId = event.pathParameters.todoId
 
+    if(todoId) throw "Please provide valid todoId for the Todo Item in the parameters"
+
     console.info('Retrieving Presigned Url...')
 
     const url = generateUrl(todoId)
